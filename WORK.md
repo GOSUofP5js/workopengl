@@ -244,7 +244,137 @@
 ---
 ## 02.  MFC에서 사각형, 타원, 글씨에 다른 3가지 추가하기
 
-#### 작성중...
+#### 코드
+##### MFCKIMView.Cpp
+        #include "pch.h"
+        #include "framework.h"
+        #include "MFCKIM.h"
+        #include "MFCKIMDoc.h"
+        #include "MFCKIMView.h"
+        
+        #ifdef _DEBUG
+        #define new DEBUG_NEW
+        #endif
+        
+        IMPLEMENT_DYNCREATE(CMFCKIMView, CView)
+        
+        BEGIN_MESSAGE_MAP(CMFCKIMView, CView)
+            ON_WM_MOUSEMOVE()
+        END_MESSAGE_MAP()
+        
+        CMFCKIMView::CMFCKIMView() noexcept
+        {
+        }
+        
+        BOOL CMFCKIMView::PreCreateWindow(CREATESTRUCT& cs)
+        {
+            return CView::PreCreateWindow(cs);
+        }
+        
+        void CMFCKIMView::OnDraw(CDC* pDC)
+        {
+            CMFCKIMDoc* pDoc = GetDocument();
+            ASSERT_VALID(pDoc);
+            if (!pDoc)
+                return;
+        
+            // 배경 색상 설정
+            pDC->FillSolidRect(m_point.x - 200, m_point.y - 200, 400, 400, RGB(255, 255, 255)); // 흰색 배경
+        
+            // 기존 도형 그리기 (사각형, 타원, 글씨)
+            pDC->Rectangle(m_point.x - 150, m_point.y - 150, m_point.x + 150, m_point.y + 150);
+            pDC->Ellipse(m_point.x - 150, m_point.y - 150, m_point.x + 150, m_point.y + 150);
+            pDC->TextOutW(m_point.x - 30, m_point.y, L"Hello ANU");
+        
+            // 아이스크림 모양 그리기 (역삼각형 위에 원)
+            int icecreamRadius = 100; // 아이스크림 원의 반지름
+            int icecreamHeight = 200; // 아이스크림 원의 높이
+            POINT icecreamPoints[3]; // 아이스크림 삼각형의 꼭지점 좌표 배열
+        
+            // 역삼각형 그리기 (콘) - 오른쪽으로 이동
+            icecreamPoints[0] = { m_point.x + 95 + 200, m_point.y - 150 }; // 왼쪽 위
+            icecreamPoints[1] = { m_point.x - 95 + 200, m_point.y - 150 }; // 오른쪽 위
+            icecreamPoints[2] = { m_point.x + 200, m_point.y + 50 };       // 아래
+            pDC->SelectObject(GetStockObject(DC_BRUSH));
+            pDC->SelectObject(GetStockObject(DC_PEN));
+            pDC->SetDCBrushColor(RGB(255, 228, 196)); // 피부색
+            pDC->SetDCPenColor(RGB(255, 165, 0));     // 갈색
+            pDC->Polygon(icecreamPoints, 3);
+        
+            // 타원 그리기 (아이스크림) - 오른쪽으로 이동
+            pDC->SelectObject(GetStockObject(DC_BRUSH));
+            pDC->SelectObject(GetStockObject(DC_PEN));
+            pDC->SetDCBrushColor(RGB(255, 255, 0));   // 노란색
+            pDC->SetDCPenColor(RGB(255, 165, 0));     // 갈색
+            pDC->Ellipse(m_point.x - icecreamRadius + 200, m_point.y - icecreamHeight, m_point.x + icecreamRadius + 200, m_point.y - 50);
+        
+            // 아이스크림 안에 텍스트 추가
+            CFont font;
+            font.CreateFontW(20, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Arial");
+            pDC->SelectObject(&font);
+            pDC->SetTextColor(RGB(0, 0, 255)); // 파란색
+            pDC->SetBkMode(TRANSPARENT);
+            pDC->TextOutW(m_point.x - 70 + 200, m_point.y - 125, L"Ice Cream~");
+        }
+        
+        
+        
+        BOOL CMFCKIMView::OnPreparePrinting(CPrintInfo* pInfo)
+        {
+            return DoPreparePrinting(pInfo);
+        }
+        
+        void CMFCKIMView::OnBeginPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
+        {
+        }
+        
+        void CMFCKIMView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
+        {
+        }
+        
+        void CMFCKIMView::OnMouseMove(UINT nFlags, CPoint point)
+        {
+            m_point = point;
+            Invalidate(true);
+            CView::OnMouseMove(nFlags, point);
+        }
+        
+        CMFCKIMDoc* CMFCKIMView::GetDocument() const
+        {
+            ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CMFCKIMDoc)));
+            return (CMFCKIMDoc*)m_pDocument;
+        }
+
+
+##### MFCKIMView.h
+        #pragma once
+        
+        class CMFCKIMView : public CView
+        {
+        protected:
+            CMFCKIMView() noexcept;
+            DECLARE_DYNCREATE(CMFCKIMView)
+        
+        public:
+            CMFCKIMDoc* GetDocument() const;
+        
+        public:
+            CPoint m_point; // 마우스 좌표
+        
+        public:
+            virtual void OnDraw(CDC* pDC);
+            virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+        
+        protected:
+            virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
+            virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
+            virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
+        
+        protected:
+            afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+            DECLARE_MESSAGE_MAP()
+        };
+
 
 ##
 
