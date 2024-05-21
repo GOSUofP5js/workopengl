@@ -238,7 +238,8 @@
 
 #### 결과 사진
 
-<img src="이미지 URL">
+<img src="https://github.com/GOSUofP5js/workopengl/assets/164286458/21bfcfec-290b-4dff-b603-ee3c9b8a27d3"> <img src="https://github.com/GOSUofP5js/workopengl/assets/164286458/21386164-30c1-4f2c-b4c0-ef1e60f21448">
+(실제 실행 화면 에선 3D로 회전합니다.)
 
 ---
 ## 02.  MFC에서 사각형, 타원, 글씨에 다른 3가지 추가하기
