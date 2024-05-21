@@ -380,6 +380,8 @@
 
 #### 결과 사진
 
+<img src="https://github.com/GOSUofP5js/workopengl/assets/164286458/fcd5d3ec-c929-4c87-9d75-5b173b7a8924"> 
+
 ---
 ## 소감문
 
